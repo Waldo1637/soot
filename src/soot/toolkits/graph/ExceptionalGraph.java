@@ -44,7 +44,7 @@ import soot.toolkits.exceptions.ThrowableSet;
  *  distinguishes exceptional control flow.</p>
  *  @param N node type
  */
-public interface ExceptionalGraph<N> extends DirectedGraph<N>
+public interface ExceptionalGraph<N> extends DirectedBodyGraph<N>
 {
     /**
      * <p>Data structure to represent the fact that

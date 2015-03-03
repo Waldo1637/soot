@@ -43,7 +43,7 @@ import soot.options.Options;
  *  This is an abstract class, providing the facilities used to build
  *  CFGs for specific purposes.</p>
  */
-public abstract class UnitGraph implements DirectedGraph<Unit>
+public abstract class UnitGraph implements DirectedBodyGraph<Unit>
 {
     protected List<Unit> heads;
     protected List<Unit> tails;
