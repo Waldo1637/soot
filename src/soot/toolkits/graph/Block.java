@@ -22,8 +22,6 @@
  * See the 'credits' file distributed with Soot for the complete list of
  * contributors.  (Soot is distributed at http://www.sable.mcgill.ca/soot)
  */
-
-
 package soot.toolkits.graph;
 
 import soot.util.*;
@@ -31,326 +29,300 @@ import java.util.*;
 import soot.*;
 import soot.baf.*;
 
-
-
-
 /**
- *    Represents BasicBlocks that partition
- *    a method body.  It is implemented as view on an
- *    underlying Body instance; as a consequence, changes made on a Block 
- *    will be automatically reflected in its enclosing method body. Blocks
- *    also exist in the context of a BlockGraph, a CFG for a method where 
- *    Block instances are the nodes of the graph. Hence, a Block can be queried
- *    for its successors and predecessors Blocks, as found in this graph.
+ * Represents BasicBlocks that partition a method body. It is implemented as
+ * view on an underlying Body instance; as a consequence, changes made on a
+ * Block will be automatically reflected in its enclosing method body. Blocks
+ * also exist in the context of a BlockGraph, a CFG for a method where Block
+ * instances are the nodes of the graph. Hence, a Block can be queried for its
+ * successors and predecessors Blocks, as found in this graph.
  */
-public class Block implements Iterable<Unit>
-{
+public class Block implements Iterable<Unit> {
+
     private Unit mHead, mTail;
     private final Body mBody;
     private List<Block> mPreds, mSuccessors;
     private int mBlockLength = 0, mIndexInMethod = 0;
+
     /**
-     *   Constructs a Block in the context of a BlockGraph, and enclosing Body instances.
-     *  
+     * Constructs a Block in the context of a BlockGraph, and enclosing Body
+     * instances.
      *
-     *   @param aHead            The first unit ir this Block.
-     *   @param aTail            The last unit  in this Block.   
-     *   @param aBody            The Block's enclosing Body instance.
-     *   @param aIndexInMethod   The index of this Block in the list of
-     *                           Blocks that partition it's enclosing Body instance.
-     *   @param aBlockLength     The number of units that makeup this block.
-     *   @param aBlockGraph      The Graph of Blocks in which this block lives.
      *
-     *   @see Body
-     *   @see Chain
-     *   @see BlockGraph
-     *   @see Unit
-     *   @see SootMethod
+     * @param aHead The first unit ir this Block.
+     * @param aTail The last unit in this Block.
+     * @param aBody The Block's enclosing Body instance.
+     * @param aIndexInMethod The index of this Block in the list of Blocks that
+     * partition it's enclosing Body instance.
+     * @param aBlockLength The number of units that makeup this block.
+     * @param aBlockGraph The Graph of Blocks in which this block lives.
+     *
+     * @see Body
+     * @see Chain
+     * @see BlockGraph
+     * @see Unit
+     * @see SootMethod
      */
-    public Block(Unit aHead, Unit aTail, Body aBody, int aIndexInMethod, int aBlockLength, BlockGraph aBlockGraph)
-    {
-        mHead = aHead;        
+    public Block(Unit aHead, Unit aTail, Body aBody, int aIndexInMethod, int aBlockLength, BlockGraph aBlockGraph) {
+        mHead = aHead;
         mTail = aTail;
         mBody = aBody;
         mIndexInMethod = aIndexInMethod;
         mBlockLength = aBlockLength;
     }
 
-
-
-    /** 
-     *  Returns the Block's enclosing Body instance.
+    /**
+     * Returns the Block's enclosing Body instance.
      *
-     *  @return      The block's chain of instructions.
-     *  @see         soot.jimple.JimpleBody
-     *  @see         BafBody 
-     *  @see         Body
+     * @return The block's chain of instructions.
+     * @see soot.jimple.JimpleBody
+     * @see BafBody
+     * @see Body
      */
-    public Body getBody() 
-    {
+    public Body getBody() {
         return mBody;
     }
-       
-    
+
     /**
-     *  Returns an iterator for the linear chain of Units that make up the block.
+     * Returns an iterator for the linear chain of Units that make up the block.
      *
-     *  @return      An iterator that iterates over the block's units.
-     *  @see Chain 
-     *  @see Unit
+     * @return An iterator that iterates over the block's units.
+     * @see Chain
+     * @see Unit
      */
-    public Iterator<Unit> iterator() 
-    {
-        if(mBody != null) 
-        {
+    @Override
+    public Iterator<Unit> iterator() {
+        if (mBody != null) {
             Chain<Unit> units = mBody.getUnits();
             return units.iterator(mHead, mTail);
         } else {
             return null;
         }
     }
-    
+
     /**
-     *  Inserts a Unit before some other Unit in this block.
+     * Inserts a Unit before some other Unit in this block.
      *
      *
-     *  @param toInsert  A Unit to be inserted.
-     *  @param point     A Unit in the Block's body
-     *                   before which we wish to insert the Unit.           
-     *  @see Unit
-     *  @see Chain
-     */         
-    public void insertBefore(Unit toInsert, Unit point)
-    {
-        if(point == mHead) 
+     * @param toInsert A Unit to be inserted.
+     * @param point A Unit in the Block's body before which we wish to insert
+     * the Unit.
+     * @see Unit
+     * @see Chain
+     */
+    public void insertBefore(Unit toInsert, Unit point) {
+        if (point == mHead) {
             mHead = toInsert;
+        }
 
         Chain<Unit> methodBody = mBody.getUnits();
         methodBody.insertBefore(toInsert, point);
     }
 
-
-     /**
-     *  Inserts a Unit after some other Unit in the Block.
+    /**
+     * Inserts a Unit after some other Unit in the Block.
      *
-     *  @param toInsert  A Unit to be inserted.
-     *  @param point     A Unit in the Block  after which we wish to 
-     *                   insert the Unit.           
-     *  @see Unit
-     */         
-    public void insertAfter(Unit toInsert, Unit point)
-    {
-        if(point == mTail) 
+     * @param toInsert A Unit to be inserted.
+     * @param point A Unit in the Block after which we wish to insert the Unit.
+     * @see Unit
+     */
+    public void insertAfter(Unit toInsert, Unit point) {
+        if (point == mTail) {
             mTail = toInsert;
+        }
 
         Chain<Unit> methodBody = mBody.getUnits();
         methodBody.insertAfter(toInsert, point);
     }
 
-
-
     /**
-     *  Removes a Unit occurring before some other Unit in the Block.
+     * Removes a Unit occurring before some other Unit in the Block.
      *
-     *  @param item       A Unit to be remove from the Block's Unit Chain.         
-     *  @return           True if the item could be found and removed.
+     * @param item A Unit to be remove from the Block's Unit Chain.
+     * @return True if the item could be found and removed.
      *
-     */         
-    public boolean remove(Unit item) 
-    {
+     */
+    public boolean remove(Unit item) {
         Chain<Unit> methodBody = mBody.getUnits();
-        
-        if(item == mHead)
+
+        if (item == mHead) {
             mHead = methodBody.getSuccOf(item);
-        else if(item == mTail)
+        } else if (item == mTail) {
             mTail = methodBody.getPredOf(item);
-        
+        }
+
         return methodBody.remove(item);
     }
-    
+
     /**
-     *  Returns the  Unit occurring immediately after some other Unit in the block.
+     * Returns the Unit occurring immediately after some other Unit in the
+     * block.
      *
-     *  @param aItem      The Unit from which we wish to get it's successor.
-     *  @return           The successor or null if <code>aItem</code> is the tail
-     *                    for this Block.     
+     * @param aItem The Unit from which we wish to get it's successor.
+     * @return The successor or null if <code>aItem</code> is the tail for this
+     * Block.
      *
-     */           
-    public Unit getSuccOf(Unit aItem) 
-    {        
+     */
+    public Unit getSuccOf(Unit aItem) {
         Chain<Unit> methodBody = mBody.getUnits();
-        if(aItem != mTail)
+        if (aItem != mTail) {
             return methodBody.getSuccOf(aItem);
-        else
+        } else {
             return null;
-    }
-    
-    /**
-     *  Returns the  Unit occurring immediately before some other Unit in the block.
-     *
-     *  @param aItem      The Unit from which we wish to get it's predecessor.
-     *  @return           The predecessor or null if <code>aItem</code> is the head
-     *                    for this Block.     
-     */      
-    public Unit getPredOf(Unit aItem) 
-    {
-        Chain<Unit> methodBody = mBody.getUnits();
-        if(aItem != mHead)
-            return methodBody.getPredOf(aItem);
-        else
-            return null;        
+        }
     }
 
     /**
-     *  Set the index of this Block in the list of Blocks that partition
-     *  its enclosing Body instance.
+     * Returns the Unit occurring immediately before some other Unit in the
+     * block.
      *
-     *   @param aIndexInMethod The index of this Block in the list of
-     *                         Blocks that partition it's enclosing
-     *                         Body instance.
-     **/
-    public void setIndexInMethod(int aIndexInMethod)
-    {
+     * @param aItem The Unit from which we wish to get it's predecessor.
+     * @return The predecessor or null if <code>aItem</code> is the head for
+     * this Block.
+     */
+    public Unit getPredOf(Unit aItem) {
+        Chain<Unit> methodBody = mBody.getUnits();
+        if (aItem != mHead) {
+            return methodBody.getPredOf(aItem);
+        } else {
+            return null;
+        }
+    }
+
+    /**
+     * Set the index of this Block in the list of Blocks that partition its
+     * enclosing Body instance.
+     *
+     * @param aIndexInMethod The index of this Block in the list of Blocks that
+     * partition it's enclosing Body instance.
+     *
+     */
+    public void setIndexInMethod(int aIndexInMethod) {
         mIndexInMethod = aIndexInMethod;
     }
 
     /**
-     *  Returns the index of this Block in the list of Blocks that partition it's
-     *  enclosing Body instance.
-     *   @return         The index of the block in it's enclosing Body instance.
-     */    
-    public int getIndexInMethod()
-    {
+     * Returns the index of this Block in the list of Blocks that partition it's
+     * enclosing Body instance.
+     *
+     * @return The index of the block in it's enclosing Body instance.
+     */
+    public int getIndexInMethod() {
         return mIndexInMethod;
     }
 
     /**
      * Returns the first unit in this block.
-     * @return The first unit in this block. 
+     *
+     * @return The first unit in this block.
      */
-    public Unit getHead() 
-    {
+    public Unit getHead() {
         return mHead;
     }
-    
+
     /**
      * Returns the last unit in this block.
+     *
      * @return The last unit in this block.
      */
-    public Unit getTail()
-    {
+    public Unit getTail() {
         return mTail;
     }
 
-    /** 
-     *   Sets the list of Blocks that are predecessors of this block in it's enclosing
-     *   BlockGraph instance.
-     *   @param preds       The a List of Blocks that precede this block.
+    /**
+     * Sets the list of Blocks that are predecessors of this block in it's
+     * enclosing BlockGraph instance.
      *
-     *   @see BlockGraph
-     */ 
-    public void setPreds(List<Block> preds)
-    {
+     * @param preds The a List of Blocks that precede this block.
+     *
+     * @see BlockGraph
+     */
+    public void setPreds(List<Block> preds) {
         mPreds = preds;
-        return;
     }
 
-    /** 
-     *   Returns the List of Block that are predecessors to this block, 
-     *   @return            A list of predecessor blocks.
-     *   @see BlockGraph
-     */     
-    public List<Block> getPreds()
-    {
+    /**
+     * Returns the List of Block that are predecessors to this block,
+     *
+     * @return A list of predecessor blocks.
+     * @see BlockGraph
+     */
+    public List<Block> getPreds() {
         return mPreds;
     }
 
-
-
     /**
-     *   Sets the list of Blocks that are successors of this block in it's enclosing
-     *   BlockGraph instance.
-     *   @param succs      The a List of Blocks that succede this block.
+     * Sets the list of Blocks that are successors of this block in it's
+     * enclosing BlockGraph instance.
      *
-     *   @see BlockGraph
+     * @param succs The a List of Blocks that succede this block.
+     *
+     * @see BlockGraph
      */
-    public void setSuccs(List<Block> succs)
-    {
+    public void setSuccs(List<Block> succs) {
         mSuccessors = succs;
     }
 
-
-
     /**
-     *   Returns the List of Blocks that are successors to this block,
-     *   @return            A list of successorblocks.
-     *   @see BlockGraph
+     * Returns the List of Blocks that are successors to this block,
+     *
+     * @return A list of successorblocks.
+     * @see BlockGraph
      */
-    public List<Block> getSuccs()
-    {
+    public List<Block> getSuccs() {
         return mSuccessors;
     }
 
-    public String toShortString() {return "Block #" + mIndexInMethod; }
+    @Override
+    public String toString() {
+        return toShortString();
+    }
 
-    public String toString()
-    {
-        StringBuffer strBuf = new StringBuffer();
+    public String toShortString() {
+        return "Block #" + mIndexInMethod;
+    }
 
-                
+    public String toLongString() {
+        StringBuilder strBuf = new StringBuilder();
 
         // print out predecessors.
-
-        strBuf.append("Block " + mIndexInMethod + ":" + System.getProperty("line.separator"));
+        strBuf.append("Block ").append(mIndexInMethod).append(":").append(System.getProperty("line.separator"));
         strBuf.append("[preds: ");
-        if(mPreds != null) {
-            Iterator<Block> it = mPreds.iterator();
-            while(it.hasNext()) {
-                
-                strBuf.append(it.next().getIndexInMethod()+ " ");
+        if (mPreds != null) {
+            for (Block b : mPreds) {
+                strBuf.append(b.getIndexInMethod()).append(" ");
             }
         }
         strBuf.append("] [succs: ");
-        if(mSuccessors != null) {
-            Iterator<Block> it = mSuccessors.iterator();
-            while(it.hasNext()) {
-                
-                strBuf.append(it.next().getIndexInMethod() + " ");
+        if (mSuccessors != null) {
+            for (Block b : mSuccessors) {
+                strBuf.append(b.getIndexInMethod()).append(" ");
             }
-            
         }
-            
-        strBuf.append("]" + System.getProperty("line.separator"));
-        
 
-        
-        //strBuf.append("     block" + mIndexInMethod + ":" + System.getProperty("line.separator"));
+        strBuf.append("]").append(System.getProperty("line.separator"));
 
         Chain<Unit> methodUnits = mBody.getUnits();
         Iterator<Unit> basicBlockIt = methodUnits.iterator(mHead, mTail);
-        
-        if(basicBlockIt.hasNext()) {
+
+        if (basicBlockIt.hasNext()) {
             Unit someUnit = (Unit) basicBlockIt.next();
-            strBuf.append(someUnit.toString() + ";" + System.getProperty("line.separator"));
-            while(basicBlockIt.hasNext()){
+            strBuf.append(someUnit.toString()).append(";").append(System.getProperty("line.separator"));
+            while (basicBlockIt.hasNext()) {
                 someUnit = (Unit) basicBlockIt.next();
-                if(someUnit == mTail)
+                if (someUnit == mTail) {
                     break;
-                strBuf.append(someUnit.toString() + ";" + System.getProperty("line.separator"));        
+                }
+                strBuf.append(someUnit.toString()).append(";").append(System.getProperty("line.separator"));
             }
             someUnit = mTail;
-            if(mTail == null) 
-                strBuf.append("error: null tail found; block length: " + mBlockLength +"" + System.getProperty("line.separator"));
-            else if(mHead != mTail)
-                strBuf.append(someUnit.toString() + ";" + System.getProperty("line.separator"));        
-        
-
+            if (mTail == null) {
+                strBuf.append("error: null tail found; block length: ").append(mBlockLength).append("").append(System.getProperty("line.separator"));
+            } else if (mHead != mTail) {
+                strBuf.append(someUnit.toString()).append(";").append(System.getProperty("line.separator"));
+            }
         }
-        // Or, it could be an empty block (e.g. Start or Stop Block) --NU
-        // else 
-        // G.v().out.println("No basic blocks found; must be interface class.");
 
         return strBuf.toString();
     }
-
 }
