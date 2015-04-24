@@ -159,36 +159,37 @@ public class Main {
         	e.printStackTrace();
         	
         	ByteArrayOutputStream bos = new ByteArrayOutputStream();
-			e.printStackTrace(new PrintStream(bos));
-			String stackStraceString = bos.toString();
-			try {
-				final String TRACKER_URL="https://github.com/Sable/soot/issues/new?";
-				String commandLineArgs = Joiner.on(" ").join(args);
-				String body = "Steps to reproduce:\n1.) ...\n\n"
-						+ "Files used to reproduce: \n...\n\n"
-						+ "Soot version: "+versionString+"\n\n"
-						+ "Command line:\n"+commandLineArgs+"\n\nMax Memory:\n"+Runtime.getRuntime().maxMemory()/(1024*1024)+"MB\n\nStack trace:\n"+stackStraceString;
-				String title = e.getClass().getName()+" when ...";
-				
-	        	StringBuilder sb = new StringBuilder();
-	        	sb.append("\n\nOuuups... something went wrong! Sorry about that.\n");
-	        	sb.append("Follow these steps to fix the problem:\n");
-	        	sb.append("1.) Are you sure you used the right command line?\n");
-	        	sb.append("    Click here to double-check:\n");
-	        	sb.append("    https://ssebuild.cased.de/nightly/soot/doc/soot_options.htm\n");
-	        	sb.append("\n");
-	        	sb.append("2.) Not sure whether it's a bug? Feel free to discuss\n");
-				sb.append("    the issue on the Soot mailing list:\n");
-				sb.append("    https://github.com/Sable/soot/wiki/Getting-help\n");			
-	        	sb.append("\n");
-	        	sb.append("3.) Sure it's a bug? Click this link to report it.\n");
-	        	sb.append("    "+TRACKER_URL+"title="+URLEncoder.encode(title,"UTF-8")+"&body="+URLEncoder.encode(body,"UTF-8")+"\n");
-	        	sb.append("    Please be as precise as possible when giving us\n");
-	        	sb.append("    information on how to reproduce the problem. Thanks!");
-	        	
-	        	System.err.println(sb.toString());
-			} catch (UnsupportedEncodingException e1) {
-			}
+                e.printStackTrace(new PrintStream(bos));
+                String stackStraceString = bos.toString();
+                try {
+                        final String TRACKER_URL="https://github.com/Sable/soot/issues/new?";
+                        String commandLineArgs = Joiner.on(" ").join(args);
+                        String body = "Steps to reproduce:\n1.) ...\n\n"
+                                        + "Files used to reproduce: \n...\n\n"
+                                        + "Soot version: "+versionString+"\n\n"
+                                        + "Command line:\n"+commandLineArgs+"\n\nMax Memory:\n"+Runtime.getRuntime().maxMemory()/(1024*1024)+"MB\n\nStack trace:\n"+stackStraceString;
+                        String title = e.getClass().getName()+" when ...";
+
+                StringBuilder sb = new StringBuilder();
+                sb.append("\n\nOuuups... something went wrong! Sorry about that.\n");
+                sb.append("Follow these steps to fix the problem:\n");
+                sb.append("1.) Are you sure you used the right command line?\n");
+                sb.append("    Click here to double-check:\n");
+                sb.append("    https://ssebuild.cased.de/nightly/soot/doc/soot_options.htm\n");
+                sb.append("\n");
+                sb.append("2.) Not sure whether it's a bug? Feel free to discuss\n");
+                        sb.append("    the issue on the Soot mailing list:\n");
+                        sb.append("    https://github.com/Sable/soot/wiki/Getting-help\n");			
+                sb.append("\n");
+                sb.append("3.) Sure it's a bug? Click this link to report it.\n");
+                sb.append("    "+TRACKER_URL+"title="+URLEncoder.encode(title,"UTF-8")+"&body="+URLEncoder.encode(body,"UTF-8")+"\n");
+                sb.append("    Please be as precise as possible when giving us\n");
+                sb.append("    information on how to reproduce the problem. Thanks!");
+
+                System.err.println(sb.toString());
+                } catch (UnsupportedEncodingException e1) {
+                }
+                throw e;//need this for the IntrumentationTimedMain to correctly display the errors
         }
     }
 
