@@ -158,7 +158,7 @@ class SootMethodRefImpl implements SootMethodRef {
         //we simply create the methods on the fly; the method body will throw an appropriate
         //error just in case the code *is* actually reached at runtime
         if(Options.v().allow_phantom_refs())
-        	return createUnresolvedErrorMethod(declaringClass);
+                return createPhantomMethod(declaringClass);
         
         if( trace == null ) {
         	ClassResolutionFailedException e = new ClassResolutionFailedException();
@@ -171,6 +171,22 @@ class SootMethodRefImpl implements SootMethodRef {
         return null;
     }
     
+    /**
+     * Creates a method place holder
+     * @param declaringClass The class that was supposed to contain the method
+     * @return The created SootMethod
+     */
+	private SootMethod createPhantomMethod(SootClass declaringClass) {
+		SootMethod m = new SootMethod(name, parameterTypes, returnType, isStatic()?Modifier.STATIC:0);
+		int modifiers = Modifier.PUBLIC; //  we don't know who will be calling us
+		if (isStatic())
+			modifiers |= Modifier.STATIC;
+		m.setModifiers(modifiers);
+                m.setPhantom(true);
+		declaringClass.addMethod(m);
+		return m;
+	}
+        
     /**
      * Creates a method body that throws an "unresolved compilation error"
      * message
