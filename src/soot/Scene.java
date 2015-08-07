@@ -104,7 +104,7 @@ public class Scene  //extends AbstractHost
         
         determineExcludedPackages();
     }
-	private void determineExcludedPackages() {
+	public final void determineExcludedPackages() {
 		excludedPackages = new LinkedList<String>();
         if (Options.v().exclude() != null)
             excludedPackages.addAll(Options.v().exclude());

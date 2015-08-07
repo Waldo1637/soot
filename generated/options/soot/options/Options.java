@@ -1092,7 +1092,7 @@ public class Options extends OptionsBase {
                     exclude = new LinkedList<String>();
 
                 exclude.add( value );
-                
+                Scene.v().determineExcludedPackages(); //refresh the excluded packages in case Scene was loaded earlier
             }
   
             else if( false 
