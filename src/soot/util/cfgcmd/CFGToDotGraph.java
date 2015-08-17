@@ -512,6 +512,7 @@ public class CFGToDotGraph {
 	} else if (node instanceof Block) {
 	  Iterator<Unit> units = ((Block) node).iterator();
 	  StringBuffer buffer = new StringBuffer();
+          buffer.append(node.toString()).append("\n");
 	  while (units.hasNext()) {
 	    Unit unit = units.next();
 	    String targetLabel = (String) printer.labels().get(unit);
