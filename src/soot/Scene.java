@@ -566,7 +566,11 @@ public class Scene //extends AbstractHost
         nameToClass.put(c.getName(), c.getType());
         c.getType().setSootClass(c);
         c.setInScene(true);
-        modifyHierarchy();
+        
+        // Phantom classes are not really part of the hierarchy anyway, so
+        // we can keep the old one
+        if (!c.isPhantom)
+        	modifyHierarchy();
     }
 
     public void removeClass(SootClass c) {
