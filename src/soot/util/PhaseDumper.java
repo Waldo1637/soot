@@ -154,16 +154,6 @@ public class PhaseDumper {
 	throws java.io.IOException {
 	StringBuffer buf = 
 	    new StringBuffer(soot.SourceLocator.v().getOutputDir());
-        
-        //If the options specify that the output directory should be a jar, we
-        //  must use a different directory for the graphs
-        if(Options.v().output_jar()){
-            if(buf.toString().endsWith(".jar")){
-                buf.delete(buf.length()-4, buf.length());
-            }
-            buf.append(".graphs");
-        }
-        
 	buf.append(File.separatorChar);
 	String className = b.getMethod().getDeclaringClass().getName();
 	buf.append(className);
